@@ -1,4 +1,4 @@
-//import com.google.guava;
+package pack1;
 import static com.google.common.math.IntMath.factorial;
 
 public class HelloOtus {
