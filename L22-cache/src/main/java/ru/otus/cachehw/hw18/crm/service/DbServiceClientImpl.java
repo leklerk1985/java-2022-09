@@ -7,6 +7,7 @@ import ru.otus.cachehw.hw18.core.repository.DataTemplateException;
 import ru.otus.cachehw.hw18.core.sessionmanager.TransactionRunner;
 import ru.otus.cachehw.hw18.crm.model.Client;
 import ru.otus.cachehw.hw18.crm.model.Id;
+import ru.otus.cachehw.mycache.HwCache;
 import ru.otus.cachehw.mycache.MyCache;
 
 import java.lang.reflect.Field;
@@ -19,11 +20,12 @@ public class DbServiceClientImpl implements DBServiceClient {
     private static final Logger log = LoggerFactory.getLogger(DbServiceClientImpl.class);
     private final DataTemplate<Client> dataTemplate;
     private final TransactionRunner transactionRunner;
-    private final MyCache<String, Client> cache = new MyCache<>();
+    private final HwCache<String, Client> cache;
 
-    public DbServiceClientImpl(TransactionRunner transactionRunner, DataTemplate<Client> dataTemplate) {
+    public DbServiceClientImpl(TransactionRunner transactionRunner, DataTemplate<Client> dataTemplate, HwCache<String, Client> cache) {
         this.transactionRunner = transactionRunner;
         this.dataTemplate = dataTemplate;
+        this.cache = cache;
     }
 
     @Override
@@ -38,6 +40,7 @@ public class DbServiceClientImpl implements DBServiceClient {
             }
             dataTemplate.update(connection, client);
             log.info("updated client: {}", client);
+            saveToCache(client);
             return client;
         });
     }
@@ -51,6 +54,7 @@ public class DbServiceClientImpl implements DBServiceClient {
         return transactionRunner.doInTransaction(connection -> {
             var clientOptional = dataTemplate.findById(connection, id);
             log.info("client: {}", clientOptional);
+            saveToCache(clientOptional);
             return clientOptional;
         });
     }
@@ -65,29 +69,12 @@ public class DbServiceClientImpl implements DBServiceClient {
     }
 
     private void saveToCache(Client client) {
-        Class<Client> clazz = Client.class;
-        Field idField = null;
-        Field[] allFields = clazz.getDeclaredFields();
-        String idValue;
-        String getterName;
-        Method getter;
+        String idValue = client.getId().toString().intern();
+        cache.put(idValue, client);
+    }
 
-        for (Field field: allFields) {
-            if (field.isAnnotationPresent(Id.class)) {
-                idField = field;
-                break;
-            }
-        }
-        if (idField == null) throw new DataTemplateException(new RuntimeException("Поле Id для класса Client не найдено!"));
-
-        try {
-            getterName = "get" + idField.getName().substring(0, 1).toUpperCase() + idField.getName().substring(1);
-            getter = clazz.getDeclaredMethod(getterName);
-            idValue = getter.invoke(client).toString().intern();
-            cache.put(idValue, client);
-        } catch (Exception e) {
-            throw new DataTemplateException(e);
-        }
+    private void saveToCache(Optional<Client> clientOpt) {
+        clientOpt.ifPresent(client -> {saveToCache(client);});
     }
 
     private Client getFromCache(long id) {

@@ -9,6 +9,7 @@ import ru.otus.cachehw.hw18.crm.datasource.DriverManagerDataSource;
 import ru.otus.cachehw.hw18.crm.model.Client;
 import ru.otus.cachehw.hw18.crm.repository.ClientDataTemplateJdbc;
 import ru.otus.cachehw.hw18.crm.service.DbServiceClientImpl;
+import ru.otus.cachehw.mycache.MyCache;
 
 import javax.sql.DataSource;
 
@@ -28,7 +29,9 @@ public class DbServiceDemo {
         var clientTemplate = new ClientDataTemplateJdbc(dbExecutor); //реализация DataTemplate, заточена на Client
 
 ///
-        var dbServiceClient = new DbServiceClientImpl(transactionRunner, clientTemplate);
+
+        var cache = new MyCache<String, Client>();
+        var dbServiceClient = new DbServiceClientImpl(transactionRunner, clientTemplate, cache);
         dbServiceClient.saveClient(new Client("dbServiceFirst"));
 
         var clientSecond = dbServiceClient.saveClient(new Client("dbServiceSecond"));
