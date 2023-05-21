@@ -11,9 +11,13 @@ import ru.otus.cachehw.hw18.crm.model.Manager;
 import ru.otus.cachehw.hw18.crm.service.DbServiceClientImpl;
 import ru.otus.cachehw.hw18.crm.service.DbServiceManagerImpl;
 import ru.otus.cachehw.hw18.mapper.*;
+import ru.otus.cachehw.mycache.HwCache;
+import ru.otus.cachehw.mycache.MyCache;
+
 import javax.sql.DataSource;
 
 public class HomeWork {
+
     private static final String URL = "jdbc:postgresql://localhost:5432/demoDB";
     private static final String USER = "postgres";
     private static final String PASSWORD = "sigma05";
@@ -37,7 +41,8 @@ public class HomeWork {
 
 
         // Код дальше должен остаться
-        var dbServiceClient = new DbServiceClientImpl(transactionRunner, dataTemplateClient);
+        var cache = new MyCache<String, Client>();
+        var dbServiceClient = new DbServiceClientImpl(transactionRunner, dataTemplateClient, cache);
         dbServiceClient.saveClient(new Client("dbServiceFirst"));
 
         var clientSecond = dbServiceClient.saveClient(new Client("dbServiceSecond"));
