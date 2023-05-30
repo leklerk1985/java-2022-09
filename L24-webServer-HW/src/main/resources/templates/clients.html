@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Работа с клиентами</title>
+    <script>
+        function createClient() {
+            const messageAfterCreatingClient = document.getElementById('messageAfterCreatingClient');
+            const clientNameValue = document.getElementById('clientName').value;
+            const clientAddressValue = document.getElementById('clientAddress').value;
+            const clientPhoneValue = document.getElementById('clientPhone').value;
+
+            fetch('/newclient?clientName=' + clientNameValue + ',clientAddress=' + clientAddressValue + ',clientPhone=' + clientPhoneValue)
+                .then(response => response.json())
+                .then(message => {
+                                    const messageJson = JSON.stringify(message);
+                                    const length = messageJson.length;
+                                    messageAfterCreatingClient.innerHTML = messageJson.slice(1, length - 1);
+                                  });
+        }
+
+        function printAllClients() {
+            const tableAllClients = document.getElementById('tableAllClients');
+
+            fetch('/allclients')
+                .then(response => response.json())
+                .then(html => {
+                                const htmlJson = JSON.stringify(html);
+                                const length = htmlJson.length;
+                                tableAllClients.innerHTML = htmlJson.slice(1, length - 1);
+                               });
+        }
+    </script>
+</head>
+<body>
+<h4>Создать клиента</h4>
+<input type="text" id = "clientName" value="" placeholder="Имя клиента">
+<input type="text" id = "clientAddress" value="" placeholder="Адрес клиента">
+<input type="text" id = "clientPhone" value="" placeholder="Телефон клиента">
+<button onclick="createClient()">Создать</button>
+<pre id = "messageAfterCreatingClient"></pre>
+
+<h4>Получить список клиентов</h4>
+<button onclick="printAllClients()">Получить</button>
+<table style="width: 400px" id = "tableAllClients">
+    <thead>
+    <tr>
+        <td style="width: 50px">Id</td>
+        <td style="width: 150px">Имя</td>
+        <td style="width: 100px">Адрес</td>
+        <td style="width: 100px">Телефоны</td>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+</body>
+</html>
