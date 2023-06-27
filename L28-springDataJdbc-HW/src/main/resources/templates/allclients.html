@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Работа с клиентами</title>
+    <script>
+        function printAllClients() {
+            const tableAllClients = document.getElementById('tableAllClients');
+
+            fetch('/allclients')
+                .then(response => response.json())
+                .then(html => {
+                                const htmlJson = JSON.stringify(html);
+                                const length = htmlJson.length;
+                                tableAllClients.innerHTML = htmlJson.slice(1, length - 1);
+                               });
+        }
+    </script>
+</head>
+<body>
+
+<table style="width: 400px" id = "tableAllClients">
+    <thead>
+    <tr>
+        <td style="width: 50px"><b>Id</b></td>
+        <td style="width: 150px"><b>Имя</b></td>
+        <td style="width: 100px"><b>Адрес</b></td>
+        <td style="width: 100px"><b>Телефоны</b></td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="client : ${allclients}">
+        <td style="width: 50px" th:text="${client.id}"></td>
+        <td style="width: 150px" th:text="${client.name}"></td>
+        <td style="width: 100px" th:text="${client.address}"></td>
+        <td style="width: 100px" th:text="${client.phones}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<a th:href="@{/}">На главную</a>
+
+
+</body>
+</html>
