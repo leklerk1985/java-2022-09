@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Создать клиента</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<form id="create-form" th:action="@{/saveclient}" th:method="post" accept-charset="utf-8">
+    <h1>Новый клиент:</h1>
+
+    <div class="row">
+        <label for="clientName">Имя:</label>
+        <input id="clientName" name="name" type="text" th:value="${name}" value=""/>
+    </div>
+
+    <div class="row">
+        <label for="clientAddress">Адрес:</label>
+        <input id="clientAddress" name="address" type="text" th:value="${address}" value=""/>
+    </div>
+
+    <div class="row">
+        <label for="clientPhone">Телефон:</label>
+        <input id="clientPhone" name="phone" type="text" th:value="${phone}" value=""/>
+    </div>
+
+    <div class="row">
+        <button type="submit">Сохранить</button>
+    </div>
+</form>
+
+<p th:text="${messageNewClient}"></p>
+
+<a th:href="@{/}">На главную</a>
+
+</body>
+</html>
