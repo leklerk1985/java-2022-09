@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package generated;
+
+option java_multiple_files = true;
+
+message NumberClient {
+    int32 beginSeq = 1;
+    int32 endSeq = 2;
+}
+
+message NumberServer {
+    int32 valueSeq = 1;
+}
+
+service NumberService {
+    rpc getNumberSequence(NumberClient) returns (stream NumberServer) {};
+}
